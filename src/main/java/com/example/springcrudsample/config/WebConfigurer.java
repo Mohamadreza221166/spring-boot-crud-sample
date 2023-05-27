@@ -7,12 +7,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import jakarta.servlet.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Configuration
@@ -22,11 +24,8 @@ public class WebConfigurer implements ServletContextInitializer {
 
     private final Environment env;
 
-    private final AdditionalProperties properties;
-
-    public WebConfigurer(Environment env, AdditionalProperties properties) {
+    public WebConfigurer(Environment env) {
         this.env = env;
-        this.properties = properties;
     }
 
     @Override
@@ -43,12 +42,24 @@ public class WebConfigurer implements ServletContextInitializer {
 
     @Bean
     public CorsFilter corsFilter() {
+        log.debug("Registering CORS filter");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = properties.getCors();
-        if (!CollectionUtils.isEmpty(config.getAllowedOrigins()) || !CollectionUtils.isEmpty(config.getAllowedOriginPatterns())) {
-            log.debug("Registering CORS filter");
-            source.registerCorsConfiguration("/api/**", config);
-        }
+        CorsConfiguration config = new CorsConfiguration();
+        List<String> allowedOrigins = new ArrayList<>();
+        List<String> allowedMethods = new ArrayList<>();
+        List<String> allowedHeaders = new ArrayList<>();
+        allowedOrigins.add("http://localhost:4200");
+        allowedOrigins.add("https://localhost:4200");
+        allowedOrigins.add("http://localhost:9000");
+        allowedOrigins.add("https://localhost:9000");
+        allowedMethods.add("*");
+        allowedHeaders.add("Authorization");
+        config.setAllowedOrigins(allowedOrigins);
+        config.setAllowedMethods(allowedMethods);
+        config.setAllowedHeaders(allowedHeaders);
+        config.setAllowCredentials(true);
+        config.setMaxAge(1800L);
+        source.registerCorsConfiguration("/api/**", config);
         return new CorsFilter(source);
     }
 

@@ -1,6 +1,5 @@
 package com.example.springcrudsample.security;
 
-import com.example.springcrudsample.config.AdditionalProperties;
 import com.example.springcrudsample.service.SecurityMetersService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -26,10 +25,14 @@ import java.util.stream.Collectors;
 public class TokenProvider {
 
     private final Logger log = LoggerFactory.getLogger(TokenProvider.class);
-
     private static final String AUTHORITIES_KEY = "auth";
-
     private static final String INVALID_JWT_TOKEN = "Invalid JWT token.";
+
+    private static final Long TOKEN_VALIDITY_IN_SECOND = 86400L;
+
+    private static final Long TOKEN_VALIDITY_IN_SECOND_FOR_REMEMBER_ME = 2592000l;
+
+    private static final String BASE64_SECRET ="NmRhMWE5YzY2NTBkZWY0MmNlNTA5MzBiMmU1NjdmZDRmNGU5OGJlYzgxZjZkYTg3ZTg3NDhlMWM2MmVkM2U0NWVhOTAxMTczNGEzOWZhNTJmOTBkNjc2NmNlZmJkZDI5OTA2N2U3ZmFjZDE0MzY3ZGYzODE1MzFmN2MwMGQ0MmI=";
 
     private final Key key;
 
@@ -41,18 +44,17 @@ public class TokenProvider {
 
     private final SecurityMetersService securityMetersService;
 
-    public TokenProvider(AdditionalProperties properties, SecurityMetersService securityMetersService) {
+    public TokenProvider(SecurityMetersService securityMetersService) {
         byte[] keyBytes;
-        String secret = properties.getSecurity().getJwt().getBase64Secret();
+        String secret = BASE64_SECRET;
         if (!ObjectUtils.isEmpty(secret)) {
             log.debug("Using a Base64-encoded JWT secret key");
         }
         keyBytes = Decoders.BASE64.decode(secret);
         key = Keys.hmacShaKeyFor(keyBytes);
         jwtParser = Jwts.parserBuilder().setSigningKey(key).build();
-        this.tokenValidityInMilliseconds = 1000 * properties.getSecurity().getJwt().getTokenValidityInSeconds();
-        this.tokenValidityInMillisecondsForRememberMe =
-            1000 * properties.getSecurity().getJwt().getTokenValidityInSecondsForRememberMe();
+        this.tokenValidityInMilliseconds = 1000 * TOKEN_VALIDITY_IN_SECOND;
+        this.tokenValidityInMillisecondsForRememberMe = 1000 * TOKEN_VALIDITY_IN_SECOND_FOR_REMEMBER_ME;
 
         this.securityMetersService = securityMetersService;
     }
