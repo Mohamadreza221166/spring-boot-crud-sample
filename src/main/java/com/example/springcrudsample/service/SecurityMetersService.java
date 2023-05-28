@@ -2,6 +2,7 @@ package com.example.springcrudsample.service;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,11 +19,14 @@ public class SecurityMetersService {
     private final Counter tokenUnsupportedCounter;
     private final Counter tokenMalformedCounter;
 
-    public SecurityMetersService(MeterRegistry registry) {
-        this.tokenInvalidSignatureCounter = invalidTokensCounterForCauseBuilder("invalid-signature").register(registry);
-        this.tokenExpiredCounter = invalidTokensCounterForCauseBuilder("expired").register(registry);
-        this.tokenUnsupportedCounter = invalidTokensCounterForCauseBuilder("unsupported").register(registry);
-        this.tokenMalformedCounter = invalidTokensCounterForCauseBuilder("malformed").register(registry);
+    private MeterRegistry meterRegistry;
+
+    public SecurityMetersService(MeterRegistry meterRegistry) {
+        this.meterRegistry = meterRegistry;
+        this.tokenInvalidSignatureCounter = invalidTokensCounterForCauseBuilder("invalid-signature").register(meterRegistry);
+        this.tokenExpiredCounter = invalidTokensCounterForCauseBuilder("expired").register(meterRegistry);
+        this.tokenUnsupportedCounter = invalidTokensCounterForCauseBuilder("unsupported").register(meterRegistry);
+        this.tokenMalformedCounter = invalidTokensCounterForCauseBuilder("malformed").register(meterRegistry);
     }
 
     private Counter.Builder invalidTokensCounterForCauseBuilder(String cause) {

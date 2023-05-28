@@ -34,10 +34,10 @@ public class WebConfigurer implements ServletContextInitializer {
             log.info("Web application configuration, using profiles: {}", (Object[]) env.getActiveProfiles());
         }
 
-        if (env.acceptsProfiles(Profiles.of(Constants.SPRING_PROFILE_DEVELOPMENT))) {
-            initH2Console(servletContext);
-        }
-        log.info("Web application fully configured");
+//        if (env.acceptsProfiles(Profiles.of(Constants.SPRING_PROFILE_DEVELOPMENT))) {
+//            initH2Console(servletContext);
+//        }
+//        log.info("Web application fully configured");
     }
 
     @Bean

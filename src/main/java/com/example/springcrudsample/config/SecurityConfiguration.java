@@ -52,8 +52,7 @@ public class SecurityConfiguration {
             ).sessionManagement(sess -> sess
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 //                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
-        .httpBasic(Customizer.withDefaults())
-        .build();
+        .httpBasic(Customizer.withDefaults());
 
         return http.build();
     }

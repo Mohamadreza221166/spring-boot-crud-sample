@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import java.sql.SQLException;
 
-@Configuration
+//@Configuration
 @EnableJpaRepositories({ "com.example.springcrudsample.repository" })
 @EnableJpaAuditing
 @EnableTransactionManagement
